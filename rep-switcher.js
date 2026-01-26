@@ -7,46 +7,37 @@
       .toLowerCase();
   }
 
-  function getRepNameFromDom() {
-    var el = document.getElementById("repNameHolder");
-    if (!el) return "";
-    return el.getAttribute("data-rep") || "";
-  }
-
   function showRepCard() {
-    var repNameRaw = getRepNameFromDom();
+    var holder = document.getElementById("repNameHolder");
+    var repNameRaw = holder ? (holder.getAttribute("data-rep") || "") : "";
     var repName = normalize(repNameRaw);
 
-    // Alle rep kaarten (die hebben data-rep)
-    var repCards = document.querySelectorAll(".rep-highlight-card[data-rep]");
-    // Fallback kaart (heeft geen data-rep)
-    var fallbackCard = document.getElementById("rep-fallback");
+    var cards = document.querySelectorAll(".rep-highlight-card[data-rep]");
+    if (!cards.length) return;
 
-    // Niets gevonden? dan stoppen
-    if (!repCards || !repCards.length) return;
+    // alles verbergen
+    for (var i = 0; i < cards.length; i++) cards[i].style.display = "none";
 
-    // Alles verbergen
-    for (var i = 0; i < repCards.length; i++) {
-      repCards[i].style.display = "none";
-    }
-    if (fallbackCard) fallbackCard.style.display = "none";
-
-    // Match zoeken
     var matched = false;
-    for (var j = 0; j < repCards.length; j++) {
-      var card = repCards[j];
+    for (var j = 0; j < cards.length; j++) {
+      var card = cards[j];
       var key = normalize(card.getAttribute("data-rep"));
       if (repName && key === repName) {
-        card.style.display = "flex"; // jouw design gebruikt flex
+        card.style.display = "flex";
         matched = true;
         break;
       }
     }
 
-    // Geen match of lege vertegenwoordiger? -> fallback tonen
-    if (!matched && fallbackCard) {
-      fallbackCard.style.display = "flex";
-    }
+    // Debug naar window
+    window.__repSwitcherDebug = {
+      repNameRaw: repNameRaw,
+      repNameNormalized: repName,
+      cards: Array.prototype.map.call(cards, function (c) { return c.getAttribute("data-rep"); }),
+      matched: matched
+    };
+
+    // GEEN fallback: als geen match → blijft alles verborgen
   }
 
   if (document.readyState === "loading") {
