@@ -14,7 +14,7 @@
   }
 
   function showRepCard() {
-    var repNameRaw = getRepNameFromDom();   // <— hier komt nu de echte naam uit je platform
+    var repNameRaw = getRepNameFromDom();
     var repName = normalize(repNameRaw);
 
     var cards = document.querySelectorAll(".rep-highlight-card[data-rep]");
@@ -35,10 +35,11 @@
       }
     }
 
-    // Fallback: alleen als er écht geen match is
+    // Fallback: toon eerste kaart als er geen match is
     if (!shown) {
       cards[0].style.display = "flex";
-      // console.warn("Geen match voor vertegenwoordiger:", repNameRaw);
+      // Debug (optioneel):
+      // console.warn("Geen match voor:", repNameRaw, "beschikbaar:", Array.from(cards).map(c => c.getAttribute("data-rep")));
     }
   }
 
