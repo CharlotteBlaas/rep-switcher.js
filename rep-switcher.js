@@ -20,26 +20,39 @@
     var cards = document.querySelectorAll(".rep-highlight-card[data-rep]");
     if (!cards || !cards.length) return;
 
+    // alles verbergen
     for (var i = 0; i < cards.length; i++) {
       cards[i].style.display = "none";
     }
 
     var shown = false;
+    var matchedRep = "";
+
     for (var j = 0; j < cards.length; j++) {
       var card = cards[j];
-      var key = normalize(card.getAttribute("data-rep"));
+      var keyRaw = card.getAttribute("data-rep") || "";
+      var key = normalize(keyRaw);
+
       if (key && repName && key === repName) {
         card.style.display = "flex";
         shown = true;
+        matchedRep = keyRaw;
         break;
       }
     }
 
-    // Fallback: toon eerste kaart als er geen match is
+    // Debug object zodat je in console kunt zien wat hij “denkt”
+    window.__repSwitcherDebug = {
+      repNameRaw: repNameRaw,
+      repNameNormalized: repName,
+      matched: shown,
+      matchedRep: matchedRep,
+      allReps: Array.prototype.map.call(cards, function (c) { return c.getAttribute("data-rep"); })
+    };
+
+    // fallback (alleen als geen match)
     if (!shown) {
       cards[0].style.display = "flex";
-      // Debug (optioneel):
-      // console.warn("Geen match voor:", repNameRaw, "beschikbaar:", Array.from(cards).map(c => c.getAttribute("data-rep")));
     }
   }
 
