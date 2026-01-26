@@ -17,42 +17,35 @@
     var repNameRaw = getRepNameFromDom();
     var repName = normalize(repNameRaw);
 
-    var cards = document.querySelectorAll(".rep-highlight-card[data-rep]");
-    if (!cards || !cards.length) return;
+    // Alle rep kaarten (die hebben data-rep)
+    var repCards = document.querySelectorAll(".rep-highlight-card[data-rep]");
+    // Fallback kaart (heeft geen data-rep)
+    var fallbackCard = document.getElementById("rep-fallback");
 
-    // alles verbergen
-    for (var i = 0; i < cards.length; i++) {
-      cards[i].style.display = "none";
+    // Niets gevonden? dan stoppen
+    if (!repCards || !repCards.length) return;
+
+    // Alles verbergen
+    for (var i = 0; i < repCards.length; i++) {
+      repCards[i].style.display = "none";
     }
+    if (fallbackCard) fallbackCard.style.display = "none";
 
-    var shown = false;
-    var matchedRep = "";
-
-    for (var j = 0; j < cards.length; j++) {
-      var card = cards[j];
-      var keyRaw = card.getAttribute("data-rep") || "";
-      var key = normalize(keyRaw);
-
-      if (key && repName && key === repName) {
-        card.style.display = "flex";
-        shown = true;
-        matchedRep = keyRaw;
+    // Match zoeken
+    var matched = false;
+    for (var j = 0; j < repCards.length; j++) {
+      var card = repCards[j];
+      var key = normalize(card.getAttribute("data-rep"));
+      if (repName && key === repName) {
+        card.style.display = "flex"; // jouw design gebruikt flex
+        matched = true;
         break;
       }
     }
 
-    // Debug object zodat je in console kunt zien wat hij “denkt”
-    window.__repSwitcherDebug = {
-      repNameRaw: repNameRaw,
-      repNameNormalized: repName,
-      matched: shown,
-      matchedRep: matchedRep,
-      allReps: Array.prototype.map.call(cards, function (c) { return c.getAttribute("data-rep"); })
-    };
-
-    // fallback (alleen als geen match)
-    if (!shown) {
-      cards[0].style.display = "flex";
+    // Geen match of lege vertegenwoordiger? -> fallback tonen
+    if (!matched && fallbackCard) {
+      fallbackCard.style.display = "flex";
     }
   }
 
